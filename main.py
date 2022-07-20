@@ -18,6 +18,7 @@ class Stresh1(QtWidgets.QLabel):
         super(Stresh1, self).__init__()
         self.is_scaled = False
         self.selected_rect = None
+        self.selected_rect_org = None
 
     def load_image(self):
         self.fname = QtWidgets.QFileDialog.getOpenFileName(self, 'Open file', os.getcwd(),"Image files (*.png *.jpg *.gif)")
@@ -72,17 +73,18 @@ class Stresh1(QtWidgets.QLabel):
 
 class Stresh2(QtWidgets.QLabel):
     
-    DELTA = 10 #for the minimum distance   default were 10  
+    DELTA = 50 #for the minimum distance   default were 10  
     def __init__(self):
         super(Stresh2, self).__init__()
         self.is_expanded = False # self.setStyleSheet("border: 2px solid black;") # self.setAlignment(QtCore.Qt.AlignCenter | QtCore.Qt.AlignBottom)
         self.expand_rate = 1.0 
         # self.rotating_angle = 0.0
 
-    def set_ui(self, bitmax):
+    def set_ui(self, bitmax, pad, rect_org_w, rect_org_h):
         self._image = bitmax
         self.draggin_idx = -1 
-        self.chosen_points = np.array([[10.0,10.0],[bitmax.width()-10.0,10.0],[bitmax.width()-10.0,bitmax.height()-10.0],[10.0,bitmax.height()-10.0]], dtype=np.float64) 
+        self.chosen_points = np.array([[pad, pad],[rect_org_w-pad, pad],[rect_org_w-pad, rect_org_h-pad],
+                                        [pad, rect_org_h-pad]], dtype=np.float64) 
         self.setPixmap(bitmax)
         
         
@@ -94,10 +96,10 @@ class Stresh2(QtWidgets.QLabel):
             for pos in self.chosen_points:
                 qpnt.append(QtCore.QPoint(pos[0], pos[1]))
             points = QtGui.QPolygon(qpnt)
-            pen2 = QtGui.QPen(QtGui.QColor(50, 50, 50, 120), 2, QtCore.Qt.SolidLine)
+            pen2 = QtGui.QPen(QtGui.QColor(50, 50, 50, 100), 3, QtCore.Qt.SolidLine)
             painter.setPen(pen2)
             painter.drawPolygon(points) # painter.drawLine(100, 100, 400, 400)
-            pen = QtGui.QPen(QtCore.Qt.black, 10, QtCore.Qt.SolidLine)
+            pen = QtGui.QPen(QtGui.QColor(50, 50, 50, 120), 20, QtCore.Qt.SolidLine)
             painter.setPen(pen) # painter.setRenderHint(QtGui.QPainter.Antialiasing, True)
             painter.drawPoints(qpnt)
         except Exception as e:
@@ -574,12 +576,17 @@ class Ui_MainWindow(object):
             currentQRect = self.label_1.currentQRubberBand.geometry()
             self.label_1.currentQRubberBand.deleteLater() # cropQPixmap = self.label_1.pixmap().copy(currentQRect.x()-10, currentQRect.y()-10, currentQRect.width()+20, currentQRect.height()+20) # cropQPixmap = cropQPixmap.copy(currentQRect.x()-10, currentQRect.y()-10, currentQRect.width()+20, currentQRect.height()+20) # 
             sr = self.label_1.scalling_rate
+            pad = 0.0
             if sr is None:
-                sr = 1
+                sr = 1.0
             pixmapp = QtGui.QPixmap(self.label_1.fname[0])
+            rect_org_x, rect_org_y, rect_org_w, rect_org_h = currentQRect.x() * sr, currentQRect.y() * sr, currentQRect.width() * sr, currentQRect.height() * sr
+
             self.label_1.selected_rect = currentQRect
-            cropQPixmap = pixmapp.copy((currentQRect.x()*sr)-10.0, (currentQRect.y()*sr)-10.0, (currentQRect.width()*sr)+(2*10.0), (currentQRect.height()*sr)+(2*10.0))
-            self.label_2.set_ui(cropQPixmap)
+            self.label_1.selected_rect_org = (rect_org_x, rect_org_y, rect_org_w, rect_org_h)
+
+            cropQPixmap = pixmapp.copy(rect_org_x-pad, rect_org_y-pad, rect_org_w+(2*pad), rect_org_h+(2*pad))
+            self.label_2.set_ui(cropQPixmap, pad, rect_org_w, rect_org_h)
         except Exception as e:
             print(e)
 
@@ -650,7 +657,7 @@ class Ui_MainWindow(object):
         self.cstum_lyt.setAlignment(self.label_2, QtCore.Qt.AlignCenter)
 
 
-    def on_expand_image(self): 
+    def on_expand_image(self, pad=0.0): 
         # to get the expand change rate
         # if not self.label_2.is_expanded:
         #     self.label_2._image = self.label_2._image.scaled(620, 877, QtCore.Qt.KeepAspectRatio, QtCore.Qt.SmoothTransformation) #, QtCore.Qt.SmoothTransformation 
@@ -696,12 +703,12 @@ class Ui_MainWindow(object):
             
             
             pixmapp = QtGui.QPixmap(self.label_1.fname[0])
-            cropQPixmap = pixmapp.copy((self.label_1.selected_rect.x()*expand_rate)-10, (self.label_1.selected_rect.y()*expand_rate)-10, (self.label_1.selected_rect.width()*expand_rate)+20, (self.label_1.selected_rect.height()*expand_rate)+20)
+            cropQPixmap = pixmapp.copy((self.label_1.selected_rect.x()*expand_rate)-pad, (self.label_1.selected_rect.y()*expand_rate)-pad, (self.label_1.selected_rect.width()*expand_rate)+(2*pad), (self.label_1.selected_rect.height()*expand_rate)+(2*pad))
             self.label_2.expand_rate = expand_rate
             cropQPixmap = cropQPixmap.scaled(620, 877, QtCore.Qt.KeepAspectRatio) # , QtCore.Qt.SmoothTransformation
-            x1 = (cropQPixmap.width()-10.0)
-            x2 = (cropQPixmap.height()-10.0)
-            x0 = 10.0
+            x1 = (cropQPixmap.width()-pad)
+            x2 = (cropQPixmap.height()-pad)
+            x0 = pad
             self.label_2.setPixmap(cropQPixmap)
             self.label_2.chosen_points = np.array([[x0,x0],[x1,x0],[x1, x2],[x0,x2]], dtype=np.float64)
         except Exception as e:
@@ -709,16 +716,16 @@ class Ui_MainWindow(object):
         
 
 
-    def on_save_image(self):
+    def on_save_image(self, pad):
         pth = os.path.join(os.getcwd(), 'data', 'cropped_1.png') 
         
         # creqte apix;qp object
         # pmx = QtGui.QPixmap(self.label_1.fname[0])
         if self.label_1.is_scaled:
-            pmx = self.label_2._image.copy(10, 10, self.label_2._image.width()-20, self.label_2._image.height()-20)
+            pmx = self.label_2._image.copy(pad, pad, self.label_2._image.width()-(2*pad), self.label_2._image.height()-(2*pad))
         else:
             mp = self.label_2.pixmap()
-            pmx = self.label_2.pixmap().copy(10, 10, mp.width()-20, mp.height()-20)
+            pmx = self.label_2.pixmap().copy(pad, pad, mp.width()-(2*pad), mp.height()-(2*pad))
         pmx.save(pth)
 
         img = cv2.imread(pth, cv2.IMREAD_COLOR)
