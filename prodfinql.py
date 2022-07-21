@@ -13,10 +13,12 @@ class Stresh1(QtWidgets.QLabel):
     def __init__(self):
         super(Stresh1, self).__init__()
         self.scrollArea = None
+        self.label_1 = None
 
     def load_image(self):
         self.fname = QtWidgets.QFileDialog.getOpenFileName(self, 'Open file', os.getcwd(),"Image files (*.png *.jpg *.gif)")
         image = QtGui.QImage(self.fname[0])
+        self.setFixedSize(image.size())
         self.setPixmap(QtGui.QPixmap.fromImage(image))
         
 
@@ -52,7 +54,7 @@ class Stresh1(QtWidgets.QLabel):
 
 class Stresh2(QtWidgets.QLabel):
     
-    DELTA = 50 #for the minimum distance   default were 10  
+    DELTA = 30 #for the minimum distance   default were 10  
     def __init__(self):
         super(Stresh2, self).__init__()
         self.is_expanded = False # self.setStyleSheet("border: 2px solid black;") # self.setAlignment(QtCore.Qt.AlignCenter | QtCore.Qt.AlignBottom)
@@ -85,10 +87,10 @@ class Stresh2(QtWidgets.QLabel):
             for pos in self.chosen_points:
                 qpnt.append(QtCore.QPoint(pos[0], pos[1]))
             points = QtGui.QPolygon(qpnt)
-            pen2 = QtGui.QPen(QtGui.QColor(50, 50, 50, 120), 3, QtCore.Qt.SolidLine)
+            pen2 = QtGui.QPen(QtGui.QColor(255, 50, 50, 120), 3, QtCore.Qt.DashLine)
             painter.setPen(pen2)
             painter.drawPolygon(points) # painter.drawLine(100, 100, 400, 400)
-            pen = QtGui.QPen(QtGui.QColor(50, 50, 50, 120), 20, QtCore.Qt.SolidLine)
+            pen = QtGui.QPen(QtGui.QColor(255, 50, 50, 255), 15, QtCore.Qt.SolidLine)
             painter.setPen(pen) # painter.setRenderHint(QtGui.QPainter.Antialiasing, True)
             painter.drawPoints(qpnt)
         except Exception as e:
@@ -130,49 +132,28 @@ class Stresh2(QtWidgets.QLabel):
 
 class Ui_MainWindow(object):  
     def setupUi(self, MainWindow):
-        MainWindow.resize(1900, 950)
-        # MainWindow.showMaximized()
+        MainWindow.resize(1900, 950) # MainWindow.showMaximized()
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.horizontalLayoutWidget = QtWidgets.QWidget(self.centralwidget)
-        # geometry = app.desktop().availableGeometry()
-        # titleBarHeight = self.horizontalLayoutWidget.style().pixelMetric(
-        #     QtWidgets.QStyle.PM_TitleBarHeight,
-        #     QtWidgets.QStyleOptionTitleBar(),
-        #     self.horizontalLayoutWidget
-        # )
-        # geometry.setHeight(geometry.height() - (titleBarHeight*2+10))
-        # geometry.setWidth(geometry.width() - (20))
-        # print(geometry.width(), geometry.height())
         self.horizontalLayoutWidget.setGeometry(QtCore.QRect(0, 0, 1880, 900)) # QtCore.QRect(10, 10, 1550, 850)
         self.horizontalLayout = QtWidgets.QHBoxLayout(self.horizontalLayoutWidget)
         self.horizontalLayout.setContentsMargins(0, 0, 0, 0)
         self.label_1 = Stresh1()
-        # self.label_1.setStyleSheet("Stresh1 {\n"
-        # "    border: 1px solid rgb(200, 198, 191);\n"
-        # "    border-radius: 10px;\n"
-        # "    background-color: rgb(250, 250, 250);\n"
-        # "    margin: 10px;\n"
-        # "    padding: 10px;\n"
-        # "}")
-        
-        # self.label_1.setMinimumSize(QtCore.QSize(0, 0))
-        # self.label_1.setMaximumSize(QtCore.QSize(16777215, 16777215))
+        self.label_1.setStyleSheet("background-color: white;")
         self.label_1.setAlignment(QtCore.Qt.AlignCenter)
         
         self.scrollArea = QtWidgets.QScrollArea()
         self.label_1.scrollArea = self.scrollArea
         self.scrollArea.setBackgroundRole(QtGui.QPalette.Dark)
-        # frame=QtWidgets.QFrame.Box
-        # scrollArea.setFrameShape(frame)
         self.scrollArea.setWidgetResizable(True)
         self.scrollArea.setWidget(self.label_1)
+        self.scrollArea.setAlignment(QtCore.Qt.AlignCenter)
 
-        # scrollArea.setMinimumSize(QtCore.QSize(0, 0))
         self.scrollArea.setFixedSize(QtCore.QSize(877, 877))
         self.scrollArea.setStyleSheet("QScrollArea {\n"
-        "    border: 1px solid rgb(200, 198, 191);\n"
+        "    border: 1px solid grey;\n"
         "    border-radius: 10px;\n"
-        "    background-color: rgb(250, 250, 250);\n"
+        "    background-color: white;\n"
         "    margin: 10px;\n"
         "    padding: 10px;\n"
         "}")
@@ -180,12 +161,8 @@ class Ui_MainWindow(object):
         self.horizontalLayout.addWidget(self.scrollArea, stretch=4, alignment=QtCore.Qt.AlignCenter)
         self.verticalLayout = QtWidgets.QVBoxLayout()
         self.label_3 = QtWidgets.QLabel(self.horizontalLayoutWidget)
-        # self.label_3.setMinimumSize(QtCore.QSize(0, 10))
-        # self.label_3.setMaximumSize(QtCore.QSize(16777215, 10))
         self.verticalLayout.addWidget(self.label_3, stretch=1, alignment=QtCore.Qt.AlignCenter)
         self.btn_load = QtWidgets.QPushButton(self.horizontalLayoutWidget)
-        # self.btn_load.setMinimumSize(QtCore.QSize(0, 30))
-        # self.btn_load.setMaximumSize(QtCore.QSize(100, 30))
         self.btn_load.setStyleSheet("QPushButton {\n"
         "    color: #333;\n"
         "    border: 1px solid #555;\n"
@@ -216,61 +193,6 @@ class Ui_MainWindow(object):
         self.line_5.setFrameShape(QtWidgets.QFrame.HLine)
         self.line_5.setFrameShadow(QtWidgets.QFrame.Sunken)
         self.verticalLayout.addWidget(self.line_5)
-        # self.combo_select = QtWidgets.QComboBox(self.horizontalLayoutWidget)
-        # # self.combo_select.setMinimumSize(QtCore.QSize(0, 20))
-        # self.combo_select.setStyleSheet("QComboBox {\n"
-        # "    border: 1px solid gray;\n"
-        # "    border-radius: 3px;\n"
-        # "    padding: 1px 18px 1px 3px;\n"
-        # "}\n"
-        # "\n"
-        # "QComboBox:editable {\n"
-        # "    background: white;\n"
-        # "}\n"
-        # "\n"
-        # "QComboBox:!editable, QComboBox::drop-down:editable {\n"
-        # "     background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,\n"
-        # "                                 stop: 0 #E1E1E1, stop: 0.4 #DDDDDD,\n"
-        # "                                 stop: 0.5 #D8D8D8, stop: 1.0 #D3D3D3);\n"
-        # "}\n"
-        # "\n"
-        # "/* QComboBox gets the \"on\" state when the popup is open */\n"
-        # "QComboBox:!editable:on, QComboBox::drop-down:editable:on {\n"
-        # "    background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,\n"
-        # "                                stop: 0 #D3D3D3, stop: 0.4 #D8D8D8,\n"
-        # "                                stop: 0.5 #DDDDDD, stop: 1.0 #E1E1E1);\n"
-        # "}\n"
-        # "\n"
-        # "QComboBox:on { /* shift the text when the popup opens */\n"
-        # "    padding-top: 3px;\n"
-        # "    padding-left: 4px;\n"
-        # "}\n"
-        # "\n"
-        # "QComboBox::drop-down {\n"
-        # "    subcontrol-origin: padding;\n"
-        # "    subcontrol-position: top right;\n"
-        # "    width: 15px;\n"
-        # "\n"
-        # "    border-left-width: 1px;\n"
-        # "    border-left-color: darkgray;\n"
-        # "    border-left-style: solid; /* just a single line */\n"
-        # "    border-top-right-radius: 3px; /* same radius as the QComboBox */\n"
-        # "    border-bottom-right-radius: 3px;\n"
-        # "}\n"
-        # "\n"
-        # "QComboBox::down-arrow {\n"
-        # "    image: url(icons/downarrow24.png);\n"
-        # "}\n"
-        # "\n"
-        # "QComboBox::down-arrow:on { /* shift the arrow when popup is open */\n"
-        # "    top: 1px;\n"
-        # "    left: 1px;\n"
-        # "}\n"
-        # "")
-        # self.combo_select.addItem("")
-        # self.combo_select.addItem("")
-        # self.verticalLayout.addWidget(self.combo_select, stretch=1, alignment=QtCore.Qt.AlignCenter)
-        
         self.btn_crop = QtWidgets.QPushButton(self.horizontalLayoutWidget)
         self.btn_crop.setStyleSheet(
                 "QPushButton {\n"
@@ -364,8 +286,6 @@ class Ui_MainWindow(object):
         self.btn_rotate1.clicked.connect(lambda : self.on_rotate_image(True))
         self.verticalLayout.addWidget(self.btn_rotate1, stretch=1, alignment=QtCore.Qt.AlignCenter)
         self.btn_rotate2 = QtWidgets.QPushButton(self.horizontalLayoutWidget)
-        # self.btn_rotate2.setMinimumSize(QtCore.QSize(100, 30))
-        # self.btn_rotate2.setMaximumSize(QtCore.QSize(100, 30))
         self.btn_rotate2.setStyleSheet("QPushButton {\n"
         "    color: #333;\n"
         "    border: 1px solid #555;\n"
@@ -525,9 +445,9 @@ class Ui_MainWindow(object):
         self.verticalLayout.addWidget(self.label, stretch=1, alignment=QtCore.Qt.AlignCenter)
         self.horizontalLayout.addLayout(self.verticalLayout, stretch=1)
         self.label_2 = Stresh2() 
-
+        
         self.label_2.setMinimumSize(QtCore.QSize(10, 10))
-        self.label_2.setMaximumSize(QtCore.QSize(877, 877))
+        self.label_2.setMaximumSize(QtCore.QSize(620, 877))
         
         
 
@@ -578,13 +498,12 @@ class Ui_MainWindow(object):
         self.label_1.load_image()
 
 
-    def on_crop_image(self, pad=10.0):
+    def on_crop_image(self, pad=0.0):
         try:
             self.label_2.is_expanded = False
-            self.label_2.expand_rate = 1.0 
             self.label_1.currentQRubberBand.hide()
             currentQRect = self.label_1.currentQRubberBand.geometry()
-            self.label_1.currentQRubberBand.deleteLater() # cropQPixmap = self.label_1.pixmap().copy(currentQRect.x()-10, currentQRect.y()-10, currentQRect.width()+20, currentQRect.height()+20) # cropQPixmap = cropQPixmap.copy(currentQRect.x()-10, currentQRect.y()-10, currentQRect.width()+20, currentQRect.height()+20) # 
+            self.label_1.currentQRubberBand.deleteLater() 
             cropQPixmap = self.label_1.pixmap().copy(currentQRect)
             self.label_2.set_ui(cropQPixmap, pad)
         except Exception as e:
@@ -598,71 +517,23 @@ class Ui_MainWindow(object):
         self.label_1.setPixmap(QtGui.QPixmap.fromImage(image))
 
 
-    def on_rotate_image(self, rotate_left=False, pad=10.0):
-        # if self.label_2.is_expanded:
-        #     pixmap = self.label_2.scaled_img.copy()
-        # else:
-        #     pixmap = self.label_2._image.copy()
-        
+    def on_rotate_image(self, rotate_left=False, pad=0.0):
         if rotate_left:
             rotation = 90
-            # self.label_2.rotating_angle -= 90
         else:
             rotation = -90
-            # self.label_2.rotating_angle += 90
         transform = QtGui.QTransform().rotate(rotation)
-
-        # pmx_org = self.label_2._image.copy()
-        # if self.label_2.rotating_angle % 180 == 0:
-        #     pmx = pmx_org.scaled(620, 877, QtCore.Qt.KeepAspectRatio) # , QtCore.Qt.SmoothTransformation
-        # else:
-        #     pmx = pmx.scaled(877, 620, QtCore.Qt.KeepAspectRatio)
-        r_pixmap = self.label_2._image.transformed(transform) # , QtCore.Qt.SmoothTransformation
-        # r_pixmap = self.label_2._image.transformed(transform, QtCore.Qt.SmoothTransformation)  #, QtCore.Qt.SmoothTransformation  # r_pixmap = pmx.transformed(QtGui.QTransform().rotate(90 if rotate_left else -90))
-
-        # if is_width_biger_thn_a4:
-        #     pixmap = pixmap.scaledToWidth(620)
-        #     r_pixmap = pixmap.transformed(transform, QtCore.Qt.SmoothTransformation) 
-        #     self.label_2.chosen_points = np.array([[10.0,10.0],[r_pixmap.width()-10.0,10.0],[r_pixmap.width()-10.0,r_pixmap.height()-10.0],[10.0,r_pixmap.height()-10.0]], dtype=np.float64)
-        #     self.label_2.setPixmap(r_pixmap)
-        #     self.label_2._image = self.label_2._image
-        # else:
-        #     r_pixmap = pixmap.transformed(transform, QtCore.Qt.SmoothTransformation) 
-        #     self.label_2.chosen_points = np.array([[10.0,10.0],[r_pixmap.width()-10.0,10.0],[r_pixmap.width()-10.0,r_pixmap.height()-10.0],[10.0,r_pixmap.height()-10.0]], dtype=np.float64)
-        #     self.label_2.setPixmap(r_pixmap)
-        #     self.label_2._image = r_pixmap
-        # if r_pixmap.width() <= r_pixmap.height():
-        #     # if self.label_2.is_expanded:
-        #     #     r_pixmap = r_pixmap.scaled(620, 877, QtCore.Qt.KeepAspectRatio) 
-        #     self.label_2.chosen_points = np.array([[10.0,10.0],[r_pixmap.width()-10.0,10.0],[r_pixmap.width()-10.0,r_pixmap.height()-10.0],[10.0,r_pixmap.height()-10.0]], dtype=np.float64) 
-        # else:
-        #     # if self.label_2.is_expanded:
-        #     #     r_pixmap = r_pixmap.scaled(877, 620, QtCore.Qt.KeepAspectRatio)
-        #     self.label_2.chosen_points = np.array([[10.0,10.0],[r_pixmap.width()-10.0,10.0],[r_pixmap.width()-10.0,r_pixmap.height()-10.0],[10.0,r_pixmap.height()-10.0]], dtype=np.float64) 
+        r_pixmap = self.label_2._image.transformed(transform)
         self.label_2.chosen_points = np.array([[pad, pad],[r_pixmap.width()-pad, pad],[r_pixmap.width()-pad, r_pixmap.height()-pad],[pad, r_pixmap.height()-pad]], dtype=np.float64) 
-        # self.label_2.scaled_img = self.label_2._image.scaledToWidth(620)
-        # self.label_2.scaled_img = self.label_2._image.scaledToHeight(877)
         self.label_2.setPixmap(r_pixmap)
-        # self.label_2.setMaximumSize(QtCore.QSize(877, 620))
-        # self.label_2.scaled_img = r_pixmap
         self.label_2._image = r_pixmap
         
 
     def on_center_image(self):
-        # self.horizontalLayout.setAlignment(self.label_2, QtCore.Qt.AlignCenter)
         self.cstum_lyt.setAlignment(self.label_2, QtCore.Qt.AlignCenter)
 
 
     def on_expand_image(self, pad=10.0): 
-        # to get the expand change rate
-        # if not self.label_2.is_expanded:
-        #     self.label_2._image = self.label_2._image.scaled(620, 877, QtCore.Qt.KeepAspectRatio, QtCore.Qt.SmoothTransformation) #, QtCore.Qt.SmoothTransformation 
-        #     self.label_2.is_expanded = True
-        # self.label_2.setPixmap(self.label_2._image)
-        # self.label_2.chosen_points = np.array([[10.0,10.0],[self.label_2._image.width()-10.0,10.0],[self.label_2._image.width()-10.0,
-        #                                         self.label_2._image.height()-10.0],[10.0,self.label_2._image.height()-10.0]], dtype=np.float64)
-        
-        
         try:
             if not self.label_2.is_expanded:
 
@@ -670,10 +541,16 @@ class Ui_MainWindow(object):
                 width, height = cropQPixmap.width(), cropQPixmap.height()
                 if width < 620 and height < 877:
                     cropQPixmap = cropQPixmap.scaled(620, 877, QtCore.Qt.KeepAspectRatio)
-
-                self.label_2.setPixmap(cropQPixmap)
-                self.label_2.chosen_points = np.array([[pad, pad],[cropQPixmap.width(), pad],[cropQPixmap.width(), 
+                    self.label_2.chosen_points = np.array([[pad, pad],[cropQPixmap.width(), pad],[cropQPixmap.width(), 
                                                         cropQPixmap.height()],[pad, cropQPixmap.height()]], dtype=np.float64)
+                else:
+                    self.label_2.chosen_points = np.array([[pad, pad],[cropQPixmap.width()/self.label_2.scaled_w, pad],
+                                                        [cropQPixmap.width()/self.label_2.scaled_w, 
+                                                        cropQPixmap.height()/self.label_2.scaled_h],
+                                                        [pad, cropQPixmap.height()/self.label_2.scaled_h]], dtype=np.float64)
+                self.label_2.setPixmap(cropQPixmap)
+                self.label_2._image = cropQPixmap
+                
         except Exception as e:
             print(str(e))
         
@@ -681,29 +558,24 @@ class Ui_MainWindow(object):
 
     def on_save_image(self, pad=0.0):
         pth = os.path.join(os.getcwd(), 'data', 'cropped_1.png') 
-        
-        # creqte apix;qp object
-        # pmx = QtGui.QPixmap(self.label_1.fname[0])
-        # if self.label_1.is_scaled:
         pmx = self.label_2._image.copy(pad, pad, self.label_2._image.width()-(2*pad), self.label_2._image.height()-(2*pad))
-        # else:
-        #     mp = self.label_2.pixmap()
-        #     pmx = self.label_2.pixmap().copy(pad, pad, mp.width()-(2*pad), mp.height()-(2*pad))
         pmx.save(pth)
 
         img = cv2.imread(pth, cv2.IMREAD_COLOR)
         height, width = img.shape[0], img.shape[1]
         mask = np.zeros((height, width), dtype=np.uint8)
-
-        if self.label_2.is_expanded:
-            r = self.label_2.expand_rate
-            print("r: ", r)
-            if r > 1:
-                cv2.fillPoly(mask, np.int64([self.label_2.chosen_points * r * self.label_1.scalling_rate]), (255)) # cv2.fillPoly(mask, np.int64([self.label_2.chosen_points * r ]), (255))
-            elif r < 1:
-                cv2.fillPoly(mask, np.int64([(self.label_2.chosen_points * r) / (r / self.label_1.scalling_rate)]), (255))  # * self.label_1.scalling_rate
-            else:
-                cv2.fillPoly(mask, np.int64([self.label_2.chosen_points * r]), (255)) 
+        
+        if self.label_2._image.width() > 620 or self.label_2._image.height() > 877:
+            x10 = self.label_2.chosen_points[0][0] * self.label_2.scaled_w
+            y10 = self.label_2.chosen_points[0][1] * self.label_2.scaled_h
+            x11 = self.label_2.chosen_points[1][0] * self.label_2.scaled_w
+            y11 = self.label_2.chosen_points[1][1] * self.label_2.scaled_h
+            x12 = self.label_2.chosen_points[2][0] * self.label_2.scaled_w
+            y12 = self.label_2.chosen_points[2][1] * self.label_2.scaled_h
+            x13 = self.label_2.chosen_points[3][0] * self.label_2.scaled_w
+            y13 = self.label_2.chosen_points[3][1] * self.label_2.scaled_h
+            pts = np.array([[x10, y10],[x11, y11],[x12, y12],[x13, y13]], dtype=np.float64)
+            cv2.fillPoly(mask, np.int64([pts]), (255)) 
         else:
             cv2.fillPoly(mask, np.int64([self.label_2.chosen_points]), (255))
         res = cv2.bitwise_and(img, img, mask=mask)  
@@ -715,43 +587,18 @@ class Ui_MainWindow(object):
         rgba = [b,g,r, alpha]
         dst = cv2.merge(rgba,4)
 
-        # # scale to fit A4
-        # if pmx.width() > 620:
-        #     dst = self.image_resize(dst, width=600)
-        #     height, width = dst.shape[0], img.shape[1]
-
-        
-        
-
         pth2 = os.path.join(os.getcwd(), 'data', 'cropped_2.png')
         cv2.imwrite(pth2, dst)
-
-        
-
 
         pdf = FPDF("P", "mm", "A4") # P = Portrait, L = Landscape 
         pdf.add_page()
 
-        # size = 7016, 4961
-        # if pmx.width() > 4961 or pmx.height() > 7016:
-        #     size = width, height
-        #     im = Image.open(pth2)
-        #     im_resized = im.resize(size, Image.ANTIALIAS)
-        #     im_resized.save("cropped_3.png", "PNG")
-        #     pdf.image(pth2, x=0, y=0)
-
-        # # pdf.image("cropped_3.png", x=0, y=0, w=pdf.w, h=pdf.h)
-        # pdf_pth = os.path.join(os.getcwd(), "data", "croped", f"croped_pdf.pdf")
-        # pdf.output(pdf_pth)
-        # pdf.close()
-        # QMessageBox.information(self.horizontalLayoutWidget, "Pdf Saved", "your pdf is saved as croped_pdf.pdf, check the folder data/croped")
-
-        print(width, height)
         # decimal millimeters = (pixels * 25.4d) / dpi;
-        if pmx.width() > 620:
-            r = 620 / pmx.width()
-            mw = width * 8 * r * 25.4 / 600
-            mh = height * 8 * r * 25.4 / 600
+        if width > 620 or height > 877:
+            sw = width / 620
+            sh = height / 877
+            mw = width / sw * 8 * 25.4 / 600
+            mh = height / sh * 8 * 25.4 / 600
         else:
             mw = (width * 8 * 25.4) / 600
             mh = (height * 8 * 25.4) / 600
@@ -771,13 +618,7 @@ class Ui_MainWindow(object):
             currentQRect = self.label_1.currentQRubberBand.geometry()
             self.label_1.currentQRubberBand.deleteLater()
 
-            sr = self.label_1.scalling_rate
-            if sr is None:
-                sr = 1
             pixmapp = QtGui.QPixmap(self.label_1.fname[0])
-            self.label_1.selected_rect = currentQRect
-            # (currentQRect.x()*sr)-10, (currentQRect.y()*sr)-10, (currentQRect.width()*sr)+20, (currentQRect.height()*sr)+20
-
             qimage = QtGui.QImage(pixmapp.copy().toImage())
             buffer = QtCore.QBuffer()
             buffer.open(QtCore.QIODevice.ReadWrite)
@@ -789,21 +630,9 @@ class Ui_MainWindow(object):
             strio.seek(0)
             im = Image.open(strio)
 
-            # im = Image.open(self.label_1.fname[0])
-            
-            
-
             shapes = []
-
-            # for i in range(10):
-            #     shapes.append(
-            #         [[(currentQRect.x(), currentQRect.y()), (currentQRect.width()+currentQRect.x(), currentQRect.y()+(cut_rate*i))],
-            #         [(currentQRect.x(), currentQRect.y()+(cut_rate*i)+(cut_rate)), (currentQRect.width()+currentQRect.x(), currentQRect.y()+currentQRect.height())]]
-            #     )
-
-            # (currentQRect.x()*sr)-10, (currentQRect.y()*sr)-10, (currentQRect.width()*sr)+20, (currentQRect.height()*sr)+20
-            x, y , w, h = (currentQRect.x()*sr), (currentQRect.y()*sr), (currentQRect.width()*sr), (currentQRect.height()*sr)
-            offset = 1
+            x, y , w, h = currentQRect.x(), currentQRect.y(), currentQRect.width(), currentQRect.height()
+            offset = 0
             cut_rate = (h / 10)
             for i in range(10):
                 shapes.append(
@@ -858,40 +687,9 @@ class Ui_MainWindow(object):
         elif direction == "vertical":
             self.label_2._image = self.label_2._image.transformed(QtGui.QTransform().scale(1, -1))
         self.label_2.setPixmap(self.label_2._image)
-        self.label_2.chosen_points = np.array([[10.0,10.0],[self.label_2._image.width()-10.0,10.0],[self.label_2._image.width()-10.0,
-                                                self.label_2._image.height()-10.0],[10.0,self.label_2._image.height()-10.0]], dtype=np.float64)
+        self.label_2.chosen_points = np.array([[0.0,0.0],[self.label_2._image.width(),0.0],[self.label_2._image.width(), self.label_2._image.height()],
+                                                [0.0,self.label_2._image.height()]], dtype=np.float64)
             
-
-    def image_resize(self, image, width = None, height = None, inter = cv2.INTER_AREA):
-        # initialize the dimensions of the image to be resized and
-        # grab the image size
-        dim = None
-        (h, w) = image.shape[:2]
-
-        # if both the width and height are None, then return the
-        # original image
-        if width is None and height is None:
-            return image
-
-        # check to see if the width is None
-        if width is None:
-            # calculate the ratio of the height and construct the
-            # dimensions
-            r = height / float(h)
-            dim = (int(w * r), height)
-
-        # otherwise, the height is None
-        else:
-            # calculate the ratio of the width and construct the
-            # dimensions
-            r = width / float(w)
-            dim = (width, int(h * r))
-
-        # resize the image
-        resized = cv2.resize(image, dim, interpolation = inter)
-
-        # return the resized image
-        return resized
 
 
 if __name__ == "__main__":
@@ -900,7 +698,7 @@ if __name__ == "__main__":
     app.setApplicationName('PhotoEditor V1.0')
     MainWindow = QtWidgets.QMainWindow()
     MainWindow.setStyleSheet("""* {
-            background-color: #f2f2f2;
+            background-color: #e5e5e5;
         }
         .QLabel {
             border-style: solid;
