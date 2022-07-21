@@ -1,10 +1,6 @@
-from ctypes import alignment
-from enum import Flag
-from logging import exception
 from PyQt5 import QtCore, QtGui, QtWidgets
 import numpy as np
 import cv2
-# from fpdf import FPDF
 from PIL import Image, ImageDraw, ImageFilter
 from PyQt5.QtWidgets import QMessageBox
 import os
