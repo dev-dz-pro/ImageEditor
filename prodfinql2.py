@@ -1,3 +1,4 @@
+from tkinter import image_names
 from PyQt5 import QtCore, QtGui, QtWidgets
 import numpy as np
 import cv2
@@ -12,13 +13,28 @@ from fpdf import FPDF
 class Stresh1(QtWidgets.QLabel):
     def __init__(self):
         super(Stresh1, self).__init__()
-        self.scrollArea = None
-        self.label_1 = None
+        self.scaled_rate_1_w = 1.0
+        self.scaled_rate_1_h = 1.0
 
     def load_image(self):
         self.fname = QtWidgets.QFileDialog.getOpenFileName(self, 'Open file', os.getcwd(),"Image files (*.png *.jpg *.gif)")
         image = QtGui.QImage(self.fname[0])
-        self.setFixedSize(image.size())
+        self.scaled_rate_1_w = 1.0
+        self.scaled_rate_1_h = 1.0
+        if image.width() > 779 or image.height() > 779:
+            self.setFixedSize(QtCore.QSize(779, 779))
+            self.setScaledContents(True)
+            if image.width() > self.width():
+                self.scaled_rate_1_w = image.width() / self.width()
+            else:
+                self.scaled_rate_1_w = 1.0
+            if image.height() > self.height():
+                self.scaled_rate_1_h = image.height() / self.height()
+            else:
+                self.scaled_rate_1_h = 1.0
+        else:
+            self.setFixedSize(image.size())
+            self.setScaledContents(False)
         self.setPixmap(QtGui.QPixmap.fromImage(image))
         
 
@@ -35,20 +51,6 @@ class Stresh1(QtWidgets.QLabel):
 
     def mouseMoveEvent (self, eventQMouseEvent):
         self.currentQRubberBand.setGeometry(QtCore.QRect(self.originQPoint, eventQMouseEvent.pos()).normalized())
-        point = eventQMouseEvent.pos()
-        if point.x() > 850:
-            scrollBarh = self.scrollArea.horizontalScrollBar()
-            scrollBarh.setValue(scrollBarh.value() + 5)
-        if point.x() < self.originQPoint.x():
-            scrollBarh = self.scrollArea.horizontalScrollBar()
-            scrollBarh.setValue(scrollBarh.value() - 5)
-        if point.y() > 850:
-            scrollBarv = self.scrollArea.verticalScrollBar()
-            scrollBarv.setValue(scrollBarv.value() + 5)
-        if point.y() < self.originQPoint.y():
-            scrollBarv = self.scrollArea.verticalScrollBar()
-            scrollBarv.setValue(scrollBarv.value() - 5)
-
 
 
 
@@ -65,12 +67,12 @@ class Stresh2(QtWidgets.QLabel):
         self.setScaledContents(True)
         self._image = bitmax
 
-        if bitmax.width() > 620:
-            self.scaled_w = bitmax.width() / 620
+        if bitmax.width() > 551:
+            self.scaled_w = bitmax.width() / 551
         else:
             self.scaled_w = 1.0
-        if bitmax.height() > 877:
-            self.scaled_h = bitmax.height() / 877
+        if bitmax.height() > 779:
+            self.scaled_h = bitmax.height() / 779
         else:
             self.scaled_h = 1.0
         
@@ -132,33 +134,19 @@ class Stresh2(QtWidgets.QLabel):
 
 class Ui_MainWindow(object):  
     def setupUi(self, MainWindow):
-        MainWindow.resize(1900, 950) # MainWindow.showMaximized()
+        MainWindow.resize(1525, 840) # MainWindow.showMaximized()
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.horizontalLayoutWidget = QtWidgets.QWidget(self.centralwidget)
-        self.horizontalLayoutWidget.setGeometry(QtCore.QRect(0, 0, 1880, 900)) # QtCore.QRect(10, 10, 1550, 850)
+        self.horizontalLayoutWidget.setGeometry(QtCore.QRect(10, 10, 1500, 800)) # QtCore.QRect(10, 10, 1550, 850)
         self.horizontalLayout = QtWidgets.QHBoxLayout(self.horizontalLayoutWidget)
         self.horizontalLayout.setContentsMargins(0, 0, 0, 0)
         self.label_1 = Stresh1()
         self.label_1.setStyleSheet("background-color: white;")
         self.label_1.setAlignment(QtCore.Qt.AlignCenter)
-        
-        self.scrollArea = QtWidgets.QScrollArea()
-        self.label_1.scrollArea = self.scrollArea
-        self.scrollArea.setBackgroundRole(QtGui.QPalette.Dark)
-        self.scrollArea.setWidgetResizable(True)
-        self.scrollArea.setWidget(self.label_1)
-        self.scrollArea.setAlignment(QtCore.Qt.AlignCenter)
+        # self.label_1.setMinimumSize(QtCore.QSize(10, 10))
+        self.label_1.setFixedSize(QtCore.QSize(779, 779))
 
-        self.scrollArea.setFixedSize(QtCore.QSize(877, 877))
-        self.scrollArea.setStyleSheet("QScrollArea {\n"
-        "    border: 1px solid grey;\n"
-        "    border-radius: 10px;\n"
-        "    background-color: white;\n"
-        "    margin: 10px;\n"
-        "    padding: 10px;\n"
-        "}")
-
-        self.horizontalLayout.addWidget(self.scrollArea, stretch=4, alignment=QtCore.Qt.AlignCenter)
+        self.horizontalLayout.addWidget(self.label_1, stretch=4, alignment=QtCore.Qt.AlignCenter)
         self.verticalLayout = QtWidgets.QVBoxLayout()
         self.label_3 = QtWidgets.QLabel(self.horizontalLayoutWidget)
         self.verticalLayout.addWidget(self.label_3, stretch=1, alignment=QtCore.Qt.AlignCenter)
@@ -447,7 +435,7 @@ class Ui_MainWindow(object):
         self.label_2 = Stresh2() 
         
         self.label_2.setMinimumSize(QtCore.QSize(10, 10))
-        self.label_2.setMaximumSize(QtCore.QSize(620, 877))
+        self.label_2.setMaximumSize(QtCore.QSize(551, 779))
         
         
 
@@ -462,7 +450,7 @@ class Ui_MainWindow(object):
         
         self.cstum_lyt = QtWidgets.QVBoxLayout()
         self.cstum_lyt.addWidget(self.label_2, alignment=QtCore.Qt.AlignBottom | QtCore.Qt.AlignCenter, stretch=0)
-        self.wdg.setFixedSize(QtCore.QSize(640, 897))
+        self.wdg.setFixedSize(QtCore.QSize(580, 805)) # + 21 for border
         self.wdg.setLayout(self.cstum_lyt)
 
         self.horizontalLayout.addWidget(self.wdg, alignment=QtCore.Qt.AlignBottom | QtCore.Qt.AlignCenter, stretch=5) # self.horizontalLayout.addWidget(self.label_2, alignment=QtCore.Qt.AlignBottom | QtCore.Qt.AlignCenter, stretch=5)
@@ -504,7 +492,11 @@ class Ui_MainWindow(object):
             self.label_1.currentQRubberBand.hide()
             currentQRect = self.label_1.currentQRubberBand.geometry()
             self.label_1.currentQRubberBand.deleteLater() 
-            cropQPixmap = self.label_1.pixmap().copy(currentQRect)
+            x = int(currentQRect.x() * self.label_1.scaled_rate_1_w)
+            y = int(currentQRect.y() * self.label_1.scaled_rate_1_h)
+            w = int(currentQRect.width() * self.label_1.scaled_rate_1_w)
+            h = int(currentQRect.height() * self.label_1.scaled_rate_1_h)
+            cropQPixmap = self.label_1.pixmap().copy(x, y, w, h)
             self.label_2.set_ui(cropQPixmap, pad)
         except Exception as e:
             print(e)
@@ -539,8 +531,8 @@ class Ui_MainWindow(object):
 
                 cropQPixmap = self.label_2._image.copy()
                 width, height = cropQPixmap.width(), cropQPixmap.height()
-                if width < 620 and height < 877:
-                    cropQPixmap = cropQPixmap.scaled(620, 877, QtCore.Qt.KeepAspectRatio)
+                if width < 551 and height < 779:
+                    cropQPixmap = cropQPixmap.scaled(551, 779, QtCore.Qt.KeepAspectRatio)
                     self.label_2.chosen_points = np.array([[pad, pad],[cropQPixmap.width(), pad],[cropQPixmap.width(), 
                                                         cropQPixmap.height()],[pad, cropQPixmap.height()]], dtype=np.float64)
                 else:
@@ -565,7 +557,7 @@ class Ui_MainWindow(object):
         height, width = img.shape[0], img.shape[1]
         mask = np.zeros((height, width), dtype=np.uint8)
         
-        if self.label_2._image.width() > 620 or self.label_2._image.height() > 877:
+        if self.label_2._image.width() > 551 or self.label_2._image.height() > 779:
             x10 = self.label_2.chosen_points[0][0] * self.label_2.scaled_w
             y10 = self.label_2.chosen_points[0][1] * self.label_2.scaled_h
             x11 = self.label_2.chosen_points[1][0] * self.label_2.scaled_w
@@ -594,14 +586,14 @@ class Ui_MainWindow(object):
         pdf.add_page()
 
         # decimal millimeters = (pixels * 25.4d) / dpi;
-        if width > 620 or height > 877:
-            sw = width / 620
-            sh = height / 877
-            mw = width / sw * 8 * 25.4 / 600
-            mh = height / sh * 8 * 25.4 / 600
+        if width > 551 or height > 779:
+            sw = width / 551
+            sh = height / 779
+            mw = width / sw * 9 * 25.4 / 600
+            mh = height / sh * 9 * 25.4 / 600
         else:
-            mw = (width * 8 * 25.4) / 600
-            mh = (height * 8 * 25.4) / 600
+            mw = (width * 9 * 25.4) / 600
+            mh = (height * 9 * 25.4) / 600
         pdf.image(pth2, x=((pdf.w/2)-(mw/2)), y=((pdf.h/2)-(mh/2)), w=mw, h=mh)
 
         
@@ -666,7 +658,7 @@ class Ui_MainWindow(object):
                 pdf.close()
 
             bp = QtGui.QPixmap(self.list_imgs[0])
-            bp.scaled(620, 877, QtCore.Qt.KeepAspectRatio)
+            bp.scaled(551, 779, QtCore.Qt.KeepAspectRatio)
             self.label_2.setPixmap(bp)
             self.label_2._image = bp
             reply = QMessageBox.question(self.horizontalLayoutWidget, "Image Blured", 

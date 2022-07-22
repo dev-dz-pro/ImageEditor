@@ -3,6 +3,7 @@ __pycache__/
 *$py.class
 prod_sc-2.zip
 prod2.py
+env-imageeditor/
 # C extensions
 *.so
 
