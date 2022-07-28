@@ -577,7 +577,7 @@ class Ui_MainWindow(object):
             self.label_2._image = self.label_2._image.transformed(QtGui.QTransform().scale(-1, 1))
         elif direction == "vertical":
             self.label_2._image = self.label_2._image.transformed(QtGui.QTransform().scale(1, -1))
-        self.label_2.setPixmap(self.label_2._image) # self.label_2.chosen_points = np.array([[0.0,0.0],[self.label_2._image.width(),0.0],[self.label_2._image.width(), self.label_2._image.height()], [0.0,self.label_2._image.height()]], dtype=np.float64)
+        self.label_2.setPixmap(self.label_2._image)  # self.label_2.chosen_points = np.array([[0.0,0.0],[self.label_2._image.width(),0.0],[self.label_2._image.width(), self.label_2._image.height()], [0.0,self.label_2._image.height()]], dtype=np.float64)
             
 
 
